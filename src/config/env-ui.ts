@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 
 import '@brightspace-ui/core/components/button/button.js';
 import '@brightspace-ui/core/components/inputs/input-text.js';
