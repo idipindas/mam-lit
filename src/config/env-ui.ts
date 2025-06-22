@@ -5,6 +5,8 @@ import '@brightspace-ui/core/components/button/button.js';
 import '@brightspace-ui/core/components/inputs/input-text.js';
 import '@brightspace-ui/core/components/alert/alert.js';
 import "../components/insert-stuff/mam-insert-dialog2";
+import "../components/insert-stuff/test-resize";
+
 import "../components/toast/mam-toast-alerts"; 
 
 @customElement('env-ui')
@@ -45,6 +47,8 @@ export class EnvUI extends LitElement {
         <d2l-button primary @click=${this._handleSave}>Save</d2l-button>
         <d2l-button @click=${this._handleCancel}>Cancel</d2l-button>
         <d2l-button @click=${this._openMamDialog}>Open MAM Dialog</d2l-button>
+                <d2l-button @click=${this._openMamDialog}>test-resize</d2l-button>
+
         <d2l-button @click=${this._showSuccessToast}>Show Success Toast</d2l-button>
         <d2l-button @click=${this._showErrorToast}>Show Error Toast</d2l-button>
       </div>
