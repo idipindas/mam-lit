@@ -76,6 +76,9 @@ export class EnvUI extends LitElement {
       <d2l-alert type="info" class="env-banner">
         Current Environment: <strong>${this.env}</strong><br />
 
+               Deployment Version : <strong>22:37</strong><br />
+
+
         API Endpoint: ${this.api}
       </d2l-alert>
 
