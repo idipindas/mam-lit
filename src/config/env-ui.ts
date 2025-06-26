@@ -59,9 +59,12 @@ export class EnvUI extends LitElement {
 
     window.addEventListener("message", (event: MessageEvent) => {
       if (event.data?.subject === "lti.sendToken") {
+        console.log("✅ LTIK received and stored:", this.ltik,event.data.ltik);
+
         this.ltik = event.data.ltik;
 
         if (this.ltik) {
+          console.log("flag rice--------------------------------",this.ltik)
           localStorage.setItem("ltik", this.ltik);
         }
         console.log("✅ LTIK received and stored:", this.ltik);
