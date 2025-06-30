@@ -36,7 +36,6 @@ export class EnvUI extends LitElement {
 
   private env: string | undefined;
 
-  private api: string | undefined;
 
   @state() private ltik: string | null = null;
 
@@ -45,7 +44,6 @@ export class EnvUI extends LitElement {
 
     this.env = import.meta.env.VITE_ENV;
 
-    this.api = import.meta.env.VITE_API_URL;
   }
 
   connectedCallback(): void {
