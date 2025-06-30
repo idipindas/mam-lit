@@ -204,7 +204,6 @@ import { customElement, property } from "lit/decorators.js";
 import "@brightspace-ui/core/components/button/button.js";
 import "@brightspace-ui/core/components/typography/typography.js";
 import "@brightspace-ui/core/components/breadcrumbs/breadcrumbs.js";
-// import "@brightspace-ui/core/components/typography/heading.js";
 import { Router } from "@vaadin/router";
 
 interface ImageData {
