@@ -6,18 +6,17 @@ import "@brightspace-ui/core/components/loading-spinner/loading-spinner.js";
 import "@brightspace-ui/core/components/alert/alert.js";
 import axios from "axios";
 
+const ORANGE_LOGIC_API = "https://your-org.orangelogic.com/API/search/v4.0/search";
+const AUTH_TOKEN = "YOUR_ACCESS_TOKEN_HERE"; 
+
 interface ImageItem {
   id: string;
   name: string;
+  thumbnailUrl: string;
 }
 
 @customElement("mam-step-search")
 export class MamStepSearch extends LitElement {
-  connectedCallback() {
-    super.connectedCallback();
-    console.log("Component mounted: mam-step-search");
-  }
-
   static styles = css`
     .search-container {
       display: flex;
@@ -42,18 +41,23 @@ export class MamStepSearch extends LitElement {
     .thumbnail {
       width: 100%;
       height: 100px;
-      background-color: #ccc;
+      background-color: #eee;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 0.9rem;
-      color: #666;
       border: 2px solid transparent;
       cursor: pointer;
+      overflow: hidden;
     }
 
     .thumbnail:hover {
       border-color: #006fbf;
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .load-more-container {
@@ -65,10 +69,6 @@ export class MamStepSearch extends LitElement {
       margin-bottom: 20px;
       font-size: 0.9rem;
       color: #333;
-    }
-
-    .load-more-container d2l-link {
-      margin-right: 8px;
     }
 
     d2l-loading-spinner {
@@ -116,24 +116,30 @@ export class MamStepSearch extends LitElement {
     this.searchAttempted = true;
     this.results = [];
 
-    console.log("Triggering search for:", this.searchTerm);
-
     try {
-      const response = await axios.get("http://localhost:3000/api/v1/search", {
+      const response = await axios.get(ORANGE_LOGIC_API, {
         params: {
-          q: this.searchTerm,
-          page: 1,
-          limit: this.limit,
+          query: this.searchTerm,
+          format: "json",
+          fields: ["SystemIdentifier", "Title", "Path_TR7"],
+          pagenumber: 1,
+          countperpage: this.limit,
+        },
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`,
         },
       });
 
-      const { results, total } = response.data;
+      const { Items, TotalCount } = response.data;
 
-      this.results = results;
-      this.totalCount = total;
+      this.results = Items.map((item: any) => ({
+        id: item.SystemIdentifier,
+        name: item.Title,
+        thumbnailUrl: item.Path_TR7?.URI || "",
+      }));
+
+      this.totalCount = TotalCount;
       this.page = 1;
-
-      console.log(`Search complete. Total: ${total}, Page: ${this.page}`);
     } catch (error) {
       console.error("Search failed", error);
     } finally {
@@ -145,21 +151,30 @@ export class MamStepSearch extends LitElement {
     this.loadingMore = true;
     const nextPage = this.page + 1;
 
-    console.log("Loading more, page:", nextPage);
-
     try {
-      const response = await axios.get("http://localhost:3000/api/v1/search", {
+      const response = await axios.get(ORANGE_LOGIC_API, {
         params: {
-          q: this.searchTerm,
-          page: nextPage,
-          limit: this.limit,
+          query: this.searchTerm,
+          format: "json",
+          fields: ["SystemIdentifier", "Title", "Path_TR7"],
+          pagenumber: nextPage,
+          countperpage: this.limit,
+        },
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`,
         },
       });
 
-      this.results = [...this.results, ...response.data.results];
-      this.page = nextPage;
+      const { Items } = response.data;
 
-      console.log(`Loaded page ${this.page}`);
+      const newResults = Items.map((item: any) => ({
+        id: item.SystemIdentifier,
+        name: item.Title,
+        thumbnailUrl: item.Path_TR7?.URI || "",
+      }));
+
+      this.results = [...this.results, ...newResults];
+      this.page = nextPage;
     } catch (error) {
       console.error("Load more failed", error);
     } finally {
@@ -168,21 +183,13 @@ export class MamStepSearch extends LitElement {
   }
 
   private _selectImage(image: ImageItem): void {
-    // this.dispatchEvent(
-    //   new CustomEvent("select-image", {
-    //     detail: image,
-    //     bubbles: true,
-    //     composed: true,
-    //   })
-    // );
     this.dispatchEvent(
-  new CustomEvent("select-image", {
-    detail: image,
-    bubbles: true,
-    composed: true,
-  })
-);
-
+      new CustomEvent("select-image", {
+        detail: image,
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   render() {
@@ -203,9 +210,7 @@ export class MamStepSearch extends LitElement {
 
       ${this.loading
         ? html`<d2l-loading-spinner size="80"></d2l-loading-spinner>`
-        : this.results.length === 0 &&
-          this.searchAttempted &&
-          !this.loading
+        : this.results.length === 0 && this.searchAttempted
         ? html`
             <d2l-alert type="info" has-close-button>
               No results found for "<strong>${this.searchTerm}</strong>"
@@ -213,8 +218,7 @@ export class MamStepSearch extends LitElement {
           `
         : html`
             <div>
-              <strong>${this.results.length}</strong> of
-              ${this.totalCount} results
+              <strong>${this.results.length}</strong> of ${this.totalCount} results
             </div>
 
             <div class="grid">
@@ -224,7 +228,12 @@ export class MamStepSearch extends LitElement {
                     class="thumbnail"
                     @click=${() => this._selectImage(item)}
                   >
-                    ${item.name}
+                    ${item.thumbnailUrl
+                      ? html`<img
+                          src="${item.thumbnailUrl}"
+                          alt="${item.name}"
+                        />`
+                      : html`<span>${item.name}</span>`}
                   </div>
                 `
               )}
