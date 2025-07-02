@@ -6,15 +6,15 @@ import "@brightspace-ui/core/components/breadcrumbs/breadcrumbs.js";
 import { Router } from "@vaadin/router";
 import axios from "axios";
 
-interface ImageData {
-  id: string;
-  name: string;
-  folder: string;
-  usageNotes: string;
-  size: string;
-  createdOn: string;
-  keywords: string[];
-}
+// interface ImageData {
+//   id: string;
+//   name: string;
+//   folder: string;
+//   usageNotes: string;
+//   size: string;
+//   createdOn: string;
+//   keywords: string[];
+// }
 
 @customElement("insert-stuff-details-page")
 export class InsertStuffDetailsPage extends LitElement {
