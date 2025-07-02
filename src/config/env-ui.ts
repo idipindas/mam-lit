@@ -80,7 +80,7 @@ export class EnvUI extends LitElement {
                Deployment Version : <strong>redeploy</strong><br />
 
 
-        API Endpoint: redeployv2
+        API Endpoint: redeployv3
       </d2l-alert>
 
       <d2l-input-text

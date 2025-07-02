@@ -176,7 +176,7 @@ export class InsertStuffDetailsPage extends LitElement {
         <div class="details">
           <div class="detail-row">
             <div class="label">Title</div>
-            <div class="value">${this.image.name}</div>
+            <div class="value">${this.image.title}</div>
           </div>
           <div class="detail-row">
             <div class="label">Unique Identifier</div>
@@ -184,23 +184,23 @@ export class InsertStuffDetailsPage extends LitElement {
           </div>
           <div class="detail-row">
             <div class="label">Content Type</div>
-            <div class="value">Photograph</div>
+            <div class="value">${this.image.mimeType}</div>
           </div>
           <div class="detail-row">
             <div class="label">Collection</div>
-            <div class="value">General Library</div>
+            <div class="value">${this.image.DocSubType}</div>
           </div>
           <div class="detail-row">
             <div class="label">Creation Date</div>
-            <div class="value">${this.image.createdOn}</div>
+            <div class="value">${this.image.createDate}</div>
           </div>
           <div class="detail-row">
             <div class="label">Image Size</div>
-            <div class="value">${this.image.height} X ${this.image.width}</div>
+            <div class="value">${this.image.imageSize}</div>
           </div>
           <div class="detail-row">
             <div class="label">Usage Notes</div>
-            <div class="value">${this.image.usageNotes}</div>
+            <div class="value">${this.image.captionLong}</div>
           </div>
           <div class="detail-row">
             <div class="label">Keywords</div>

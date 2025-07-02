@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "frame-ancestors https://glorious-caiman-admittedly.ngrok-free.app https://brightspace.com https://*.brightspace.com;"
+          "value": "frame-ancestors https://glorious-caiman-admittedly.ngrok-free.app https://brightspace.com https://*.brightspace.com https://lti-tool-backend.onrender.com;"
         }
       ]
     }

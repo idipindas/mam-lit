@@ -1,17 +1,17 @@
-
-
 import { LitElement, html, css } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import "@brightspace-ui/core/components/inputs/input-textarea.js";
 import "@brightspace-ui/core/components/inputs/input-checkbox.js";
 import "@brightspace-ui/core/components/button/button.js";
 import "@brightspace-ui/core/components/breadcrumbs/breadcrumbs.js";
-// import "@brightspace-ui/core/components/typography/heading.js";
 import { Router } from "@vaadin/router";
+import axios from "axios";
 
 interface ImageData {
   id: string;
   name: string;
+  recordID: string;
+  thumbnailUrl?: string;
 }
 
 @customElement("insert-stuff-insert-page")
@@ -44,10 +44,6 @@ export class InsertStuffInsertPage extends LitElement {
       font-size: 16px;
       color: black;
       margin-bottom: 20px;
-    }
-
-    d2l-heading {
-      color: black;
     }
 
     d2l-breadcrumbs {
@@ -93,7 +89,7 @@ export class InsertStuffInsertPage extends LitElement {
     }
   `;
 
-  @state() private image: ImageData = { id: "", name: "" };
+  @state() private image: ImageData = { id: "", name: "", recordID: "" };
   @state() private altText: string = "";
   @state() private isDecorative: boolean = false;
 
@@ -118,24 +114,36 @@ export class InsertStuffInsertPage extends LitElement {
     if (this.isDecorative) this.altText = "";
   }
 
-  private _insert() {
+  private async _insert() {
     const payload = {
       image: this.image,
-      altText: this.isDecorative ? null : this.altText,
-      decorative: this.isDecorative,
+      altText: this.isDecorative ? "" : this.altText,
+      isDecorative: this.isDecorative
     };
+console.log("/////////////", this.image.recordID,payload.altText, payload.isDecorative);
 
-    console.log("Insert payload:", payload);
+    try {
+      const response = await axios.patch("http://localhost:3000/api/image-metadata", {
+        recordID: this.image.recordID,
+        altText: payload.altText,
+        isDecorative: payload.isDecorative
+      });
 
-    this.dispatchEvent(
-      new CustomEvent("insert-image", {
-        detail: payload,
-        bubbles: true,
-        composed: true,
-      })
-    );
+      console.log("Metadata updated:", response.data);
 
-    alert("Image inserted successfully!");
+      this.dispatchEvent(
+        new CustomEvent("insert-image", {
+          detail: payload,
+          bubbles: true,
+          composed: true
+        })
+      );
+
+      alert("Image metadata saved and inserted successfully!");
+    } catch (error: any) {
+      console.error("Insert failed:", error);
+      alert("Failed to insert image. Please try again.");
+    }
   }
 
   private _back() {
@@ -161,7 +169,11 @@ export class InsertStuffInsertPage extends LitElement {
       </d2l-breadcrumbs>
 
       <div class="main">
-        <div class="preview">IMAGE PLACEHOLDER</div>
+        <div class="preview">
+          ${this.image.thumbnailUrl
+            ? html`<img src=${this.image.thumbnailUrl} alt="" style="max-width:100%; max-height:100%;" />`
+            : html`IMAGE PREVIEW`}
+        </div>
 
         <div class="form-section">
           <d2l-input-textarea
